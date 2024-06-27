@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+biai/x64/
+biai/training/
+biai/testing/
+biai/img/
+biai/biai/x64/
+biai/.vs/
