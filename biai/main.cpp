@@ -103,9 +103,14 @@ public:
         for (std::size_t i = 0; i < inputs.size(); i++)
         {
             inputs[i]->addError(error * inputWeights[i]);
-        }
+        }/*//Sigmoid
         if(isOutput==false)
-            error *= (lastRes * (1.0 - lastRes));
+            error *= (lastRes * (1.0 - lastRes));*/
+        //ReLu
+        if (lastRes <= 0)
+        {
+            error = 0;
+        }
         for (std::size_t i = 0; i < inputs.size(); i++)
         {
             inputWeights[i] += rate * error * inputs[i]->getLastRes();
@@ -118,7 +123,7 @@ public:
     }
 
     virtual double activation()
-    {
+    {/*//Sigmoid
         double sum = 0.0;
         for (std::size_t i = 0; i < inputs.size(); i++)
         {
@@ -128,6 +133,18 @@ public:
                 sum += inputs[i]->getLastRes();
         }
         lastRes = 1.0 / (1.0 + std::exp(-sum));
+        resReady = true;
+        return lastRes;*/
+        //ReLu
+        double sum = 0.0;
+        for (std::size_t i = 0; i < inputs.size(); i++)
+        {
+            if (inputs[i]->resReady == false)
+                sum += inputs[i]->activation() * inputWeights[i];
+            else
+                sum += inputs[i]->getLastRes();
+        }
+        lastRes = sum > 0.0 ? sum : 0.0;
         resReady = true;
         return lastRes;
     }
@@ -606,16 +623,16 @@ int main()
     srand(time(NULL));
     std::cout << "Initializing input images...";
     processImages();
-    std::vector<int> lD{ 3750, 3750, 1024, 256, 4 };
+    std::vector<int> lD{ 3750, 1024, 512, 128, 4 };
     double learningRate = 10;
     Net n(lD);
     std::vector<double> resultX, resultY;
     for (int i = 0; i < 8; i++)
     {
         learningRate /= 10;
-        double acc = train(n, learningRate, 24, i);
+        double acc = train(n, learningRate, 64, i);
         std::cout << "\n\nAchieved accuracy: " << std::to_string(acc);
-        resultX.push_back((i + 1) * 24);
+        resultX.push_back((i + 1) * 64);
         resultY.push_back(acc);
         Graph graphMaker;
         graphMaker.run(generateGraphInput(resultX, resultY, i * 10000));
