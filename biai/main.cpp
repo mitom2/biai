@@ -592,7 +592,7 @@ double train(Net& net, double rate, int epochs, int graphNum)
         }
         resultY.push_back(100.0 * ((double)correct) / ((double)runs));
         lT = test(net, graphNum, e);
-        resultXt.push_back(lT);
+        resultYt.push_back(lT * 100.0);
     }
     Graph graphMaker;
     graphMaker.run(generateGraphInput(resultX, resultY, graphNum + 1));
@@ -606,16 +606,16 @@ int main()
     srand(time(NULL));
     std::cout << "Initializing input images...";
     processImages();
-    std::vector<int> lD{ 3750, 1024, 256, 64, 4 };
-    double learningRate = 1;
+    std::vector<int> lD{ 3750, 3750, 1024, 256, 4 };
+    double learningRate = 10;
     Net n(lD);
     std::vector<double> resultX, resultY;
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 8; i++)
     {
         learningRate /= 10;
-        double acc = train(n, learningRate, 16, i);
+        double acc = train(n, learningRate, 24, i);
         std::cout << "\n\nAchieved accuracy: " << std::to_string(acc);
-        resultX.push_back((i + 1) * 16);
+        resultX.push_back((i + 1) * 24);
         resultY.push_back(acc);
         Graph graphMaker;
         graphMaker.run(generateGraphInput(resultX, resultY, i * 10000));
